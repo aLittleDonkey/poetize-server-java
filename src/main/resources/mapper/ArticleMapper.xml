@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.ArticleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.Article">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="sort_id" property="sortId"/>
+        <result column="label_id" property="labelId"/>
+        <result column="article_cover" property="articleCover"/>
+        <result column="article_title" property="articleTitle"/>
+        <result column="article_content" property="articleContent"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="comment_status" property="commentStatus"/>
+        <result column="recommend_status" property="recommendStatus"/>
+        <result column="view_status" property="viewStatus"/>
+        <result column="password" property="password"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, sort_id, label_id, article_cover, article_title, article_content, password, view_status, recommend_status, view_count, like_count, comment_status, create_time, update_time, update_by, deleted
+    </sql>
+
+</mapper>

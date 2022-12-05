@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="email" property="email"/>
+        <result column="user_status" property="userStatus"/>
+        <result column="gender" property="gender"/>
+        <result column="open_id" property="openId"/>
+        <result column="avatar" property="avatar"/>
+        <result column="introduction" property="introduction"/>
+        <result column="user_type" property="userType"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, username, password, phone_number, email, user_status, gender, open_id, avatar, introduction, user_type, create_time, update_time, update_by, deleted
+    </sql>
+
+</mapper>

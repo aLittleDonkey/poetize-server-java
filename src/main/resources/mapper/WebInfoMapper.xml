@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.WebInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.WebInfo">
+        <id column="id" property="id"/>
+        <result column="web_name" property="webName"/>
+        <result column="web_title" property="webTitle"/>
+        <result column="notices" property="notices"/>
+        <result column="footer" property="footer"/>
+        <result column="background_image" property="backgroundImage"/>
+        <result column="avatar" property="avatar"/>
+        <result column="random_avatar" property="randomAvatar"/>
+        <result column="random_name" property="randomName"/>
+        <result column="random_cover" property="randomCover"/>
+        <result column="waifu_json" property="waifuJson"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, web_name, web_title, notices, footer, background_image, avatar, random_avatar, random_name, random_cover, waifu_json, status
+    </sql>
+
+</mapper>
