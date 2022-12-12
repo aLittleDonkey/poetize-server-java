@@ -6,6 +6,10 @@ import lombok.Data;
 @Data
 public class BaseRequestVO extends Page {
 
+    private String order;
+
+    private boolean desc = true;
+
     private Integer source;
 
     private Integer floorCommentId;

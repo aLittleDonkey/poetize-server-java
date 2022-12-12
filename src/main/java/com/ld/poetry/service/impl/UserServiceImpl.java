@@ -163,10 +163,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return PoetryResult.fail("用户名重复！");
         }
         User u = new User();
-        BeanUtils.copyProperties(user, u);
-        u.setEmail(null);
+        u.setUsername(user.getUsername());
         u.setPhoneNumber(null);
-        u.setPassword(DigestUtils.md5DigestAsHex(u.getPassword().getBytes()));
+        u.setEmail(null);
+        u.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
         if (!StringUtils.hasText(u.getAvatar())) {
             u.setAvatar(PoetryUtil.getRandomAvatar(null));
         }
@@ -230,11 +230,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
         }
         User u = new User();
-        BeanUtils.copyProperties(user, u);
         u.setId(PoetryUtil.getUserId());
-        u.setPassword(null);
-        u.setEmail(null);
-        u.setPhoneNumber(null);
+        u.setUsername(user.getUsername());
+        u.setAvatar(user.getAvatar());
+        u.setGender(user.getGender());
+        u.setIntroduction(user.getIntroduction());
         updateById(u);
         User one = lambdaQuery().eq(User::getId, u.getId()).one();
         PoetryCache.put(PoetryUtil.getToken(), one, CommonConst.TOKEN_EXPIRE);

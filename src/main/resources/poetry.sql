@@ -1,4 +1,12 @@
+-- 第一步：执行建库语句
+
 CREATE DATABASE IF NOT EXISTS poetize DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+
+
+
+-- 第二步：执行建表语句
 
 DROP TABLE IF EXISTS `user`;
 
@@ -59,7 +67,7 @@ CREATE TABLE `comment` (
   `floor_comment_id` int DEFAULT NULL COMMENT '楼层评论ID',
   `parent_user_id` int DEFAULT NULL COMMENT '父发表用户名ID',
   `like_count` int NOT NULL DEFAULT 0 COMMENT '点赞数',
-  `comment_content` varchar(256) NOT NULL COMMENT '评论内容',
+  `comment_content` varchar(1024) NOT NULL COMMENT '评论内容',
   `comment_info` varchar(256) DEFAULT NULL COMMENT '评论额外信息',
 
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -160,14 +168,6 @@ CREATE TABLE `resource_path` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源路径';
 
-
-INSERT INTO `poetry`.`user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`) VALUES (1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', 0, 'Sara', 0);
-
-INSERT INTO `poetry`.`web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES (1, 'Sara', '寻国记', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
-
-
-
-
 DROP TABLE IF EXISTS `im_chat_group`;
 
 CREATE TABLE `im_chat_group` (
@@ -185,8 +185,6 @@ CREATE TABLE `im_chat_group` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天群';
 
-INSERT INTO `im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`) VALUES(-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0);
-
 DROP TABLE IF EXISTS `im_chat_group_user`;
 
 CREATE TABLE `im_chat_group_user` (
@@ -203,8 +201,6 @@ CREATE TABLE `im_chat_group_user` (
 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天群成员';
-
-insert into `im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `user_status`) values(1, -1, 1, 1, 1);
 
 DROP TABLE IF EXISTS `im_chat_user_message`;
 
@@ -229,7 +225,7 @@ CREATE TABLE `im_chat_user_group_message` (
   `group_id` int NOT NULL COMMENT '群ID',
   `from_id` int NOT NULL COMMENT '发送ID',
   `to_id` int DEFAULT NULL COMMENT '接收ID',
-  `content` varchar(2048) NOT NULL COMMENT '内容',
+  `content` varchar(1024) NOT NULL COMMENT '内容',
 
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否启用[0:未删除，1:已删除]',
@@ -264,3 +260,17 @@ CREATE TABLE `resource` (
 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资源信息';
+
+
+
+
+
+-- 第三步：执行初始化语句
+
+INSERT INTO `user` (`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`) VALUES(1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', 0, 'Sara', 0);
+
+INSERT INTO `web_info` (`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES(1, 'Sara', '寻国记', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
+
+INSERT INTO `im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`) VALUES(-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0);
+
+INSERT INTO `im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `user_status`) VALUES(1, -1, 1, 1, 1);

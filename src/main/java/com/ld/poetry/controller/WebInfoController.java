@@ -195,7 +195,11 @@ public class WebInfoController {
         } else {
             wrapper.eq(baseRequestVO.getResourceStatus() != null, ResourcePath::getStatus, baseRequestVO.getResourceStatus());
         }
-        wrapper.orderByDesc(ResourcePath::getCreateTime).page(baseRequestVO);
+        if (baseRequestVO.isDesc()) {
+            wrapper.orderByDesc(ResourcePath::getCreateTime).page(baseRequestVO);
+        } else {
+            wrapper.orderByAsc(ResourcePath::getCreateTime).page(baseRequestVO);
+        }
 
         return PoetryResult.success(baseRequestVO);
     }
