@@ -38,6 +38,7 @@ public class ArticleController {
     @PostMapping("/saveArticle")
     public PoetryResult saveArticle(@Validated @RequestBody ArticleVO articleVO) {
         PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        PoetryCache.remove(CommonConst.ARTICLE_LIST);
         return articleService.saveArticle(articleVO);
     }
 
@@ -49,6 +50,7 @@ public class ArticleController {
     @LoginCheck(1)
     public PoetryResult deleteArticle(@RequestParam("id") Integer id) {
         PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        PoetryCache.remove(CommonConst.ARTICLE_LIST);
         return articleService.deleteArticle(id);
     }
 
@@ -59,6 +61,7 @@ public class ArticleController {
     @PostMapping("/updateArticle")
     @LoginCheck(1)
     public PoetryResult updateArticle(@Validated @RequestBody ArticleVO articleVO) {
+        PoetryCache.remove(CommonConst.ARTICLE_LIST);
         return articleService.updateArticle(articleVO);
     }
 

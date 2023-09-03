@@ -3,14 +3,14 @@ package com.ld.poetry.service.impl;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ld.poetry.config.PoetryResult;
-import com.ld.poetry.entity.Article;
 import com.ld.poetry.dao.ArticleMapper;
+import com.ld.poetry.entity.Article;
 import com.ld.poetry.entity.Label;
 import com.ld.poetry.entity.Sort;
 import com.ld.poetry.entity.User;
 import com.ld.poetry.service.ArticleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ld.poetry.utils.*;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,14 +127,23 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public PoetryResult<Page> listArticle(BaseRequestVO baseRequestVO) {
+        List<Integer> ids = null;
+        List<List<Integer>> idList = null;
+        if (StringUtils.hasText(baseRequestVO.getArticleSearch())) {
+            idList = commonQuery.getArticleIds(baseRequestVO.getArticleSearch());
+            ids = idList.stream().flatMap(Collection::stream).collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(ids)) {
+                baseRequestVO.setRecords(new ArrayList<>());
+                return PoetryResult.success(baseRequestVO);
+            }
+        }
+
         LambdaQueryChainWrapper<Article> lambdaQuery = lambdaQuery();
         lambdaQuery.eq(Article::getViewStatus, PoetryEnum.STATUS_ENABLE.getCode());
-        if (StringUtils.hasText(baseRequestVO.getSearchKey())) {
-            lambdaQuery.like(Article::getArticleTitle, baseRequestVO.getSearchKey());
-        }
-        if (baseRequestVO.getRecommendStatus() != null && baseRequestVO.getRecommendStatus()) {
-            lambdaQuery.eq(Article::getRecommendStatus, PoetryEnum.STATUS_ENABLE.getCode());
-        }
+        lambdaQuery.in(!CollectionUtils.isEmpty(ids), Article::getId, ids);
+        lambdaQuery.like(StringUtils.hasText(baseRequestVO.getSearchKey()), Article::getArticleTitle, baseRequestVO.getSearchKey());
+        lambdaQuery.eq(baseRequestVO.getRecommendStatus() != null && baseRequestVO.getRecommendStatus(), Article::getRecommendStatus, PoetryEnum.STATUS_ENABLE.getCode());
+
 
         if (baseRequestVO.getLabelId() != null) {
             lambdaQuery.eq(Article::getLabelId, baseRequestVO.getLabelId());
@@ -140,18 +151,35 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             lambdaQuery.eq(Article::getSortId, baseRequestVO.getSortId());
         }
 
-        lambdaQuery.orderByDesc(Article::getCreateTime).page(baseRequestVO);
+        lambdaQuery.orderByDesc(Article::getCreateTime);
+
+        lambdaQuery.page(baseRequestVO);
 
         List<Article> records = baseRequestVO.getRecords();
         if (!CollectionUtils.isEmpty(records)) {
-            List<ArticleVO> collect = records.stream().map(article -> {
+            List<ArticleVO> articles = new ArrayList<>();
+            List<ArticleVO> titles = new ArrayList<>();
+            List<ArticleVO> contents = new ArrayList<>();
+
+            for (Article article : records) {
                 article.setPassword(null);
                 if (article.getArticleContent().length() > CommonConst.SUMMARY) {
                     article.setArticleContent(article.getArticleContent().substring(0, CommonConst.SUMMARY).replace("`", "").replace("#", "").replace(">", ""));
                 }
                 ArticleVO articleVO = buildArticleVO(article, false);
-                return articleVO;
-            }).collect(Collectors.toList());
+                if (CollectionUtils.isEmpty(ids)) {
+                    articles.add(articleVO);
+                } else if (idList.get(0).contains(articleVO.getId())) {
+                    titles.add(articleVO);
+                } else if (idList.get(1).contains(articleVO.getId())) {
+                    contents.add(articleVO);
+                }
+            }
+
+            List<ArticleVO> collect = new ArrayList<>();
+            collect.addAll(articles);
+            collect.addAll(titles);
+            collect.addAll(contents);
             baseRequestVO.setRecords(collect);
         }
         return PoetryResult.success(baseRequestVO);
@@ -248,7 +276,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             articleVO.setUsername(PoetryUtil.getRandomName(articleVO.getUserId().toString()));
         }
         if (articleVO.getCommentStatus()) {
-            articleVO.setCommentCount(commonQuery.getCommentCount(articleVO.getId()));
+            articleVO.setCommentCount(commonQuery.getCommentCount(articleVO.getId(), CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode()));
         } else {
             articleVO.setCommentCount(0);
         }

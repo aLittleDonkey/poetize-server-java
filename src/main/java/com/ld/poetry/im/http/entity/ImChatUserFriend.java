@@ -58,12 +58,5 @@ public class ImChatUserFriend implements Serializable {
     @TableField("create_time")
     private LocalDateTime createTime;
 
-    /**
-     * 是否启用[0:未删除，1:已删除]
-     */
-    @TableField("deleted")
-    @TableLogic
-    private Boolean deleted;
-
 
 }

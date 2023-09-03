@@ -23,7 +23,7 @@ public class PoetryExceptionHandler {
     @ResponseBody
     public PoetryResult handlerException(Exception ex) {
         log.error("请求URL-----------------" + PoetryUtil.getRequest().getRequestURL());
-        log.error("出错啦-----------------" + ex.getMessage());
+        log.error("出错啦------------------", ex);
         if (ex instanceof PoetryRuntimeException) {
             PoetryRuntimeException e = (PoetryRuntimeException) ex;
             return PoetryResult.fail(e.getMessage());

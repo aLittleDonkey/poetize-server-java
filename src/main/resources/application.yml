@@ -14,7 +14,7 @@ spring:
   mail:
     host: smtp.qq.com
     username: $$$$邮箱地址
-    password: $$$$邮箱密码
+    password: $$$$邮箱授权码
     default-encoding: utf-8
     protocol: smtp
     port: 465
@@ -37,3 +37,9 @@ spring:
 user:
   code:
     format: 【poetize.cn】%s为本次验证的验证码，请在5分钟内完成验证。为保证账号安全，请勿泄漏此验证码。
+
+qiniu:
+  accessKey: $$$$七牛云accessKey
+  secretKey: $$$$七牛云secretKey
+  bucket: $$$$七牛云存储空间
+  downloadUrl: $$$$七牛云访问域名，以/结尾，仿照【https://file.poetize.cn/】

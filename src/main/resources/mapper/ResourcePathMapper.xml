@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.ld.poetry.entity.ResourcePath">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
+        <result column="classify" property="classify"/>
         <result column="cover" property="cover"/>
         <result column="url" property="url"/>
         <result column="introduction" property="introduction"/>
@@ -13,12 +14,11 @@
         <result column="status" property="status"/>
         <result column="remark" property="remark"/>
         <result column="create_time" property="createTime"/>
-        <result column="deleted" property="deleted"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, cover, url, introduction, type, status, remark, create_time, deleted
+        id, title, classify, cover, url, introduction, type, status, remark, create_time
     </sql>
 
 </mapper>

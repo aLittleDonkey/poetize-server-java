@@ -4,6 +4,7 @@ package com.ld.poetry.controller;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.ld.poetry.config.LoginCheck;
 import com.ld.poetry.config.PoetryResult;
+import com.ld.poetry.config.SaveCheck;
 import com.ld.poetry.dao.ArticleMapper;
 import com.ld.poetry.entity.Article;
 import com.ld.poetry.entity.WeiYan;
@@ -11,6 +12,7 @@ import com.ld.poetry.service.WeiYanService;
 import com.ld.poetry.utils.CommonConst;
 import com.ld.poetry.utils.PoetryEnum;
 import com.ld.poetry.utils.PoetryUtil;
+import com.ld.poetry.utils.StringUtil;
 import com.ld.poetry.vo.BaseRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -39,11 +41,18 @@ public class WeiYanController {
      */
     @PostMapping("/saveWeiYan")
     @LoginCheck
+    @SaveCheck
     public PoetryResult saveWeiYan(@RequestBody WeiYan weiYanVO) {
-        PoetryUtil.checkEmail();
         if (!StringUtils.hasText(weiYanVO.getContent())) {
             return PoetryResult.fail("微言不能为空！");
         }
+
+        String content = StringUtil.removeHtml(weiYanVO.getContent());
+        if (!StringUtils.hasText(content)) {
+            return PoetryResult.fail("微言内容不合法！");
+        }
+        weiYanVO.setContent(content);
+
         WeiYan weiYan = new WeiYan();
         weiYan.setUserId(PoetryUtil.getUserId());
         weiYan.setContent(weiYanVO.getContent());
@@ -107,7 +116,6 @@ public class WeiYanController {
     @GetMapping("/deleteWeiYan")
     @LoginCheck
     public PoetryResult deleteWeiYan(@RequestParam("id") Integer id) {
-        PoetryUtil.checkEmail();
         Integer userId = PoetryUtil.getUserId();
         weiYanService.lambdaUpdate().eq(WeiYan::getId, id)
                 .eq(WeiYan::getUserId, userId)

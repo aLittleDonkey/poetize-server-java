@@ -35,6 +35,12 @@ public class ResourcePath implements Serializable {
     private String title;
 
     /**
+     * 分类
+     */
+    @TableField("classify")
+    private String classify;
+
+    /**
      * 封面
      */
     @TableField("cover")
@@ -76,10 +82,4 @@ public class ResourcePath implements Serializable {
     @TableField("create_time")
     private LocalDateTime createTime;
 
-    /**
-     * 是否启用[0:未删除，1:已删除]
-     */
-    @TableField("deleted")
-    @TableLogic
-    private Boolean deleted;
 }

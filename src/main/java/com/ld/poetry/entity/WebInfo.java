@@ -95,4 +95,10 @@ public class WebInfo implements Serializable {
      */
     @TableField("status")
     private Boolean status;
+
+    @TableField(exist = false)
+    private String historyAllCount;
+
+    @TableField(exist = false)
+    private String historyDayCount;
 }

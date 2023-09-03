@@ -73,6 +73,20 @@ public class AdminController {
     }
 
     /**
+     * 修改用户赞赏
+     */
+    @GetMapping("/user/changeUserAdmire")
+    @LoginCheck(0)
+    public PoetryResult changeUserAdmire(@RequestParam("userId") Integer userId, @RequestParam("admire") String admire) {
+        userService.lambdaUpdate()
+                .eq(User::getId, userId)
+                .set(User::getAdmire, admire)
+                .update();
+        PoetryCache.remove(CommonConst.ADMIRE);
+        return PoetryResult.success();
+    }
+
+    /**
      * 修改用户类型
      */
     @GetMapping("/user/changeUserType")
@@ -177,11 +191,11 @@ public class AdminController {
     @GetMapping("/comment/user/deleteComment")
     @LoginCheck(1)
     public PoetryResult userDeleteComment(@RequestParam("id") Integer id) {
-        Comment comment = commentService.lambdaQuery().select(Comment::getSource).eq(Comment::getId, id).one();
+        Comment comment = commentService.lambdaQuery().select(Comment::getSource, Comment::getType).eq(Comment::getId, id).one();
         if (comment == null) {
             return PoetryResult.success();
         }
-        if (comment.getSource() == CommonConst.TREE_HOLE_COMMENT_SOURCE) {
+        if (!CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(comment.getType())) {
             return PoetryResult.fail("权限不足！");
         }
         Article one = articleService.lambdaQuery().eq(Article::getId, comment.getSource()).select(Article::getUserId).one();

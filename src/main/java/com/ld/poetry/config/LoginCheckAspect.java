@@ -8,12 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 
 @Aspect
 @Component
+@Order(0)
 @Slf4j
 public class LoginCheckAspect {
 
@@ -36,7 +38,7 @@ public class LoginCheckAspect {
             }
         } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
             log.info("请求IP：" + PoetryUtil.getIpAddr(PoetryUtil.getRequest()));
-            if (loginCheck.value() == PoetryEnum.USER_TYPE_ADMIN.getCode() && user.getId().intValue() != 1) {
+            if (loginCheck.value() == PoetryEnum.USER_TYPE_ADMIN.getCode() && user.getId().intValue() != CommonConst.ADMIN_USER_ID) {
                 return PoetryResult.fail("请输入管理员账号！");
             }
         } else {
@@ -48,11 +50,34 @@ public class LoginCheckAspect {
         }
 
         //重置过期时间
-        PoetryCache.put(token, user, CommonConst.TOKEN_EXPIRE);
+        String userId = user.getId().toString();
+        boolean flag1 = false;
         if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
-            PoetryCache.put(CommonConst.USER_TOKEN + user.getId(), token, CommonConst.TOKEN_EXPIRE);
+            flag1 = PoetryCache.get(CommonConst.USER_TOKEN_INTERVAL + userId) == null;
         } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
-            PoetryCache.put(CommonConst.ADMIN_TOKEN + user.getId(), token, CommonConst.TOKEN_EXPIRE);
+            flag1 = PoetryCache.get(CommonConst.ADMIN_TOKEN_INTERVAL + userId) == null;
+        }
+
+        if (flag1) {
+            synchronized (userId.intern()) {
+                boolean flag2 = false;
+                if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
+                    flag2 = PoetryCache.get(CommonConst.USER_TOKEN_INTERVAL + userId) == null;
+                } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
+                    flag2 = PoetryCache.get(CommonConst.ADMIN_TOKEN_INTERVAL + userId) == null;
+                }
+
+                if (flag2) {
+                    PoetryCache.put(token, user, CommonConst.TOKEN_EXPIRE);
+                    if (token.contains(CommonConst.USER_ACCESS_TOKEN)) {
+                        PoetryCache.put(CommonConst.USER_TOKEN + userId, token, CommonConst.TOKEN_EXPIRE);
+                        PoetryCache.put(CommonConst.USER_TOKEN_INTERVAL + userId, token, CommonConst.TOKEN_INTERVAL);
+                    } else if (token.contains(CommonConst.ADMIN_ACCESS_TOKEN)) {
+                        PoetryCache.put(CommonConst.ADMIN_TOKEN + userId, token, CommonConst.TOKEN_EXPIRE);
+                        PoetryCache.put(CommonConst.ADMIN_TOKEN_INTERVAL + userId, token, CommonConst.TOKEN_INTERVAL);
+                    }
+                }
+            }
         }
         return joinPoint.proceed();
     }

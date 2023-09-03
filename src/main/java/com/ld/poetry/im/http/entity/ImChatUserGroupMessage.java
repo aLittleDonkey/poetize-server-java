@@ -3,10 +3,13 @@ package com.ld.poetry.im.http.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -60,13 +63,6 @@ public class ImChatUserGroupMessage implements Serializable {
      */
     @TableField("create_time")
     private LocalDateTime createTime;
-
-    /**
-     * 是否启用[0:未删除，1:已删除]
-     */
-    @TableField("deleted")
-    @TableLogic
-    private Boolean deleted;
 
 
 }

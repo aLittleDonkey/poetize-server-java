@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="com.ld.poetry.entity.Comment">
         <id column="id" property="id"/>
         <result column="source" property="source"/>
+        <result column="type" property="type"/>
         <result column="parent_comment_id" property="parentCommentId"/>
         <result column="user_id" property="userId"/>
         <result column="parent_user_id" property="parentUserId"/>
@@ -14,12 +15,11 @@
         <result column="comment_info" property="commentInfo"/>
         <result column="floor_comment_id" property="floorCommentId"/>
         <result column="create_time" property="createTime"/>
-        <result column="deleted" property="deleted"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, source, parent_comment_id, user_id, parent_user_id, like_count, floor_comment_id, comment_content, comment_info, create_time, deleted
+        id, source, type, parent_comment_id, user_id, parent_user_id, like_count, floor_comment_id, comment_content, comment_info, create_time
     </sql>
 
 </mapper>

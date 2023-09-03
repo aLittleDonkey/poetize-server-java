@@ -12,12 +12,11 @@
         <result column="type" property="type"/>
         <result column="source" property="source"/>
         <result column="create_time" property="createTime"/>
-        <result column="deleted" property="deleted"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, like_count, content, is_public, source, type, create_time, deleted
+        id, user_id, like_count, content, is_public, source, type, create_time
     </sql>
 
 </mapper>

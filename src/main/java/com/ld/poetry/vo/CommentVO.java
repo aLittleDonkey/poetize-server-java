@@ -18,6 +18,12 @@ public class CommentVO {
     @NotNull(message = "评论来源标识不能为空")
     private Integer source;
 
+    /**
+     * 评论来源类型
+     */
+    @NotBlank(message = "评论来源类型不能为空")
+    private String type;
+
     //层主的parentCommentId是0，回复的parentCommentId是层主的id
     private Integer parentCommentId;
 

@@ -77,6 +77,12 @@ public class User implements Serializable {
     private String avatar;
 
     /**
+     * 赞赏
+     */
+    @TableField("admire")
+    private String admire;
+
+    /**
      * 简介
      */
     @TableField("introduction")

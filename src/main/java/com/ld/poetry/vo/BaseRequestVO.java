@@ -12,9 +12,13 @@ public class BaseRequestVO extends Page {
 
     private Integer source;
 
+    private String commentType;
+
     private Integer floorCommentId;
 
     private String searchKey;
+
+    private String articleSearch;
 
     // 是否推荐[0:否，1:是]
     private Boolean recommendStatus;
@@ -31,5 +35,7 @@ public class BaseRequestVO extends Page {
 
     private String resourceType;
 
-    private Boolean resourceStatus;
+    private Boolean status;
+
+    private String classify;
 }

@@ -45,7 +45,6 @@ public class ImChatUserFriendController {
     @GetMapping("/addFriend")
     @LoginCheck
     public PoetryResult addFriend(@RequestParam("friendId") Integer friendId, @RequestParam(value = "remark", required = false) String remark) {
-        PoetryUtil.checkEmail();
         User friend = commonQuery.getUser(friendId);
         if (friend == null) {
             return PoetryResult.fail("用户不存在！");
@@ -114,7 +113,6 @@ public class ImChatUserFriendController {
     public PoetryResult changeFriend(@RequestParam("friendId") Integer friendId,
                                      @RequestParam(value = "friendStatus", required = false) Integer friendStatus,
                                      @RequestParam(value = "remark", required = false) String remark) {
-        PoetryUtil.checkEmail();
         Integer userId = PoetryUtil.getUserId();
         ImChatUserFriend userFriend = userFriendService.lambdaQuery()
                 .eq(ImChatUserFriend::getUserId, userId)

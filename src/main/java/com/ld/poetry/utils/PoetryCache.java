@@ -42,14 +42,8 @@ public class PoetryCache {
 
         //设置过期时间
         if (expire > 0) {
-            Future future = executor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    //过期后清除该键值对
-                    synchronized (PoetryCache.class) {
-                        map.remove(key);
-                    }
-                }
+            Future future = executor.schedule(() -> {
+                map.remove(key);
             }, expire, TimeUnit.SECONDS);
             map.put(key, new Entity(data, future));
         } else {

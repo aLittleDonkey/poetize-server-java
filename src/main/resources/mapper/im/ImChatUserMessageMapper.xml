@@ -10,12 +10,11 @@
         <result column="content" property="content" />
         <result column="message_status" property="messageStatus" />
         <result column="create_time" property="createTime" />
-        <result column="deleted" property="deleted" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, from_id, to_id, content, message_status, create_time, deleted
+        id, from_id, to_id, content, message_status, create_time
     </sql>
 
 </mapper>

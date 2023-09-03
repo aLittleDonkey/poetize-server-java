@@ -41,6 +41,12 @@ public class Comment implements Serializable {
     private Integer parentCommentId;
 
     /**
+     * 评论来源类型
+     */
+    @TableField("type")
+    private String type;
+
+    /**
      * 发表用户ID
      */
     @TableField("user_id")
@@ -81,13 +87,6 @@ public class Comment implements Serializable {
      */
     @TableField("create_time")
     private LocalDateTime createTime;
-
-    /**
-     * 是否启用[0:未删除，1:已删除]
-     */
-    @TableField("deleted")
-    @TableLogic
-    private Boolean deleted;
 
 
 }

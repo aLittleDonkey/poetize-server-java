@@ -11,6 +11,7 @@ import com.ld.poetry.im.http.service.ImChatUserMessageService;
 import com.ld.poetry.utils.CommonConst;
 import com.ld.poetry.utils.CommonQuery;
 import com.ld.poetry.utils.PoetryCache;
+import com.ld.poetry.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -132,7 +133,14 @@ public class ImWsMsgHandler implements IWsMsgHandler {
         }
         try {
             ImMessage imMessage = JSON.parseObject(text, ImMessage.class);
-            WsResponse wsResponse = WsResponse.fromText(text, ImConfigConst.CHARSET);
+
+            String content = StringUtil.removeHtml(imMessage.getContent());
+            if (!StringUtils.hasText(content)) {
+                return null;
+            }
+            imMessage.setContent(content);
+
+            WsResponse wsResponse = WsResponse.fromText(JSON.toJSONString(imMessage), ImConfigConst.CHARSET);
             if (imMessage.getMessageType().intValue() == ImEnum.MESSAGE_TYPE_MSG_SINGLE.getCode()) {
                 //单聊
                 ImChatUserMessage userMessage = new ImChatUserMessage();

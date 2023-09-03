@@ -10,12 +10,11 @@
         <result column="friend_status" property="friendStatus" />
         <result column="remark" property="remark" />
         <result column="create_time" property="createTime" />
-        <result column="deleted" property="deleted" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, friend_id, friend_status, remark, create_time, deleted
+        id, user_id, friend_id, friend_status, remark, create_time
     </sql>
 
 </mapper>

@@ -45,19 +45,27 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public PoetryResult saveComment(CommentVO commentVO) {
-        LambdaQueryChainWrapper<Article> articleWrapper = new LambdaQueryChainWrapper<>(articleMapper);
-        Article one = articleWrapper.eq(Article::getId, commentVO.getSource()).select(Article::getUserId, Article::getArticleTitle, Article::getCommentStatus).one();
+        if (CommentTypeEnum.getEnumByCode(commentVO.getType()) == null) {
+            return PoetryResult.fail("评论来源类型不存在！");
+        }
+        Article one = null;
+        if (CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(commentVO.getType())) {
+            LambdaQueryChainWrapper<Article> articleWrapper = new LambdaQueryChainWrapper<>(articleMapper);
+            one = articleWrapper.eq(Article::getId, commentVO.getSource()).select(Article::getUserId, Article::getArticleTitle, Article::getCommentStatus).one();
 
-        if (one != null && !one.getCommentStatus()) {
-            return PoetryResult.fail("评论功能已关闭！");
+            if (one == null) {
+                return PoetryResult.fail("文章不存在");
+            } else {
+                if (!one.getCommentStatus()) {
+                    return PoetryResult.fail("评论功能已关闭！");
+                }
+            }
         }
 
-        if (one == null && commentVO.getSource() != CommonConst.TREE_HOLE_COMMENT_SOURCE) {
-            return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
-        }
 
         Comment comment = new Comment();
         comment.setSource(commentVO.getSource());
+        comment.setType(commentVO.getType());
         comment.setCommentContent(commentVO.getCommentContent());
         comment.setParentCommentId(commentVO.getParentCommentId());
         comment.setFloorCommentId(commentVO.getFloorCommentId());
@@ -88,18 +96,22 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public PoetryResult<BaseRequestVO> listComment(BaseRequestVO baseRequestVO) {
-        if (baseRequestVO.getSource() == null) {
+        if (baseRequestVO.getSource() == null || !StringUtils.hasText(baseRequestVO.getCommentType())) {
             return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
         }
-        LambdaQueryChainWrapper<Article> articleWrapper = new LambdaQueryChainWrapper<>(articleMapper);
-        Article one = articleWrapper.eq(Article::getId, baseRequestVO.getSource()).select(Article::getCommentStatus).one();
 
-        if (one != null && !one.getCommentStatus()) {
-            return PoetryResult.fail("评论功能已关闭！");
+        if (CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(baseRequestVO.getCommentType())) {
+            LambdaQueryChainWrapper<Article> articleWrapper = new LambdaQueryChainWrapper<>(articleMapper);
+            Article one = articleWrapper.eq(Article::getId, baseRequestVO.getSource()).select(Article::getCommentStatus).one();
+
+            if (one != null && !one.getCommentStatus()) {
+                return PoetryResult.fail("评论功能已关闭！");
+            }
         }
 
+
         if (baseRequestVO.getFloorCommentId() == null) {
-            lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getParentCommentId, CommonConst.FIRST_COMMENT).orderByAsc(Comment::getCreateTime).page(baseRequestVO);
+            lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getType, baseRequestVO.getCommentType()).eq(Comment::getParentCommentId, CommonConst.FIRST_COMMENT).orderByAsc(Comment::getCreateTime).page(baseRequestVO);
             List<Comment> comments = baseRequestVO.getRecords();
             if (CollectionUtils.isEmpty(comments)) {
                 return PoetryResult.success(baseRequestVO);
@@ -107,7 +119,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             List<CommentVO> commentVOs = comments.stream().map(c -> {
                 CommentVO commentVO = buildCommentVO(c);
                 Page page = new Page(1, 5);
-                lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getFloorCommentId, c.getId()).orderByAsc(Comment::getCreateTime).page(page);
+                lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getType, baseRequestVO.getCommentType()).eq(Comment::getFloorCommentId, c.getId()).orderByAsc(Comment::getCreateTime).page(page);
                 List<Comment> childComments = page.getRecords();
                 if (childComments != null) {
                     List<CommentVO> ccVO = childComments.stream().map(cc -> buildCommentVO(cc)).collect(Collectors.toList());
@@ -118,7 +130,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             }).collect(Collectors.toList());
             baseRequestVO.setRecords(commentVOs);
         } else {
-            lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getFloorCommentId, baseRequestVO.getFloorCommentId()).orderByAsc(Comment::getCreateTime).page(baseRequestVO);
+            lambdaQuery().eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getType, baseRequestVO.getCommentType()).eq(Comment::getFloorCommentId, baseRequestVO.getFloorCommentId()).orderByAsc(Comment::getCreateTime).page(baseRequestVO);
             List<Comment> childComments = baseRequestVO.getRecords();
             if (CollectionUtils.isEmpty(childComments)) {
                 return PoetryResult.success(baseRequestVO);
@@ -136,20 +148,20 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             if (baseRequestVO.getSource() != null) {
                 wrapper.eq(Comment::getSource, baseRequestVO.getSource());
             }
+            if (StringUtils.hasText(baseRequestVO.getCommentType())) {
+                wrapper.eq(Comment::getType, baseRequestVO.getCommentType());
+            }
             wrapper.orderByDesc(Comment::getCreateTime).page(baseRequestVO);
         } else {
             List<Integer> userArticleIds = commonQuery.getUserArticleIds(PoetryUtil.getUserId());
-            if (CollectionUtils.isEmpty(userArticleIds) ||
-                    (!CollectionUtils.isEmpty(userArticleIds) &&
-                            baseRequestVO.getSource() != null &&
-                            !userArticleIds.contains(baseRequestVO.getSource()))) {
+            if (CollectionUtils.isEmpty(userArticleIds)) {
                 baseRequestVO.setTotal(0);
                 baseRequestVO.setRecords(new ArrayList());
             } else {
                 if (baseRequestVO.getSource() != null) {
-                    wrapper.eq(Comment::getSource, baseRequestVO.getSource());
+                    wrapper.eq(Comment::getSource, baseRequestVO.getSource()).eq(Comment::getType, CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode());
                 } else {
-                    wrapper.in(Comment::getSource, userArticleIds);
+                    wrapper.eq(Comment::getType, CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode()).in(Comment::getSource, userArticleIds);
                 }
                 wrapper.orderByDesc(Comment::getCreateTime).page(baseRequestVO);
             }

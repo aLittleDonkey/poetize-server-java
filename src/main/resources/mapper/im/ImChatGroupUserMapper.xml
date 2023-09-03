@@ -12,12 +12,11 @@
         <result column="remark" property="remark"/>
         <result column="user_status" property="userStatus"/>
         <result column="create_time" property="createTime"/>
-        <result column="deleted" property="deleted"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, group_id, user_id, verify_user_id, admin_flag, remark, user_status, create_time, deleted
+        id, group_id, user_id, verify_user_id, admin_flag, remark, user_status, create_time
     </sql>
 
 </mapper>

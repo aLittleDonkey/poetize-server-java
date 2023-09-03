@@ -13,12 +13,11 @@
         <result column="in_type" property="inType"/>
         <result column="group_type" property="groupType"/>
         <result column="create_time" property="createTime"/>
-        <result column="deleted" property="deleted"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, group_name, master_user_id, avatar, group_type, introduction, notice, in_type, create_time, deleted
+        id, group_name, master_user_id, avatar, group_type, introduction, notice, in_type, create_time
     </sql>
 
 </mapper>

@@ -61,7 +61,6 @@ public class ImChatGroupUserController {
     @GetMapping("/enterGroup")
     @LoginCheck
     public PoetryResult enterGroup(@RequestParam("id") Integer id, @RequestParam(value = "remark", required = false) String remark) {
-        PoetryUtil.checkEmail();
         ImChatGroup chatGroup = imChatGroupService.getById(id);
         if (chatGroup == null) {
             return PoetryResult.fail("群组不存在！");
@@ -110,7 +109,6 @@ public class ImChatGroupUserController {
                                          @RequestParam("userId") Integer userId,
                                          @RequestParam("userStatus") Integer userStatus,
                                          @RequestParam("oldUserStatus") Integer oldUserStatus) {
-        PoetryUtil.checkEmail();
         ImChatGroup chatGroup = imChatGroupService.getById(groupId);
         if (chatGroup == null) {
             return PoetryResult.fail("群组不存在！");
@@ -176,7 +174,6 @@ public class ImChatGroupUserController {
     public PoetryResult changeAdmin(@RequestParam("groupId") Integer groupId,
                                     @RequestParam("userId") Integer userId,
                                     @RequestParam("adminFlag") Boolean adminFlag) {
-        PoetryUtil.checkEmail();
         ImChatGroup chatGroup = imChatGroupService.getById(groupId);
         if (chatGroup == null) {
             return PoetryResult.fail("群组不存在！");
@@ -206,7 +203,6 @@ public class ImChatGroupUserController {
     @GetMapping("/quitGroup")
     @LoginCheck
     public PoetryResult quitGroup(@RequestParam("id") Integer id) {
-        PoetryUtil.checkEmail();
         ImChatGroup chatGroup = imChatGroupService.getById(id);
         if (chatGroup == null) {
             return PoetryResult.fail("群组不存在！");
@@ -259,7 +255,6 @@ public class ImChatGroupUserController {
                                                    @RequestParam(value = "userStatus", required = false) Integer userStatus,
                                                    @RequestParam(value = "current", defaultValue = "1") Long current,
                                                    @RequestParam(value = "size", defaultValue = "20") Long size) {
-        PoetryUtil.checkEmail();
         Integer userId = PoetryUtil.getUserId();
         Page<ImChatGroupUser> page = new Page<>();
         page.setCurrent(current);

@@ -56,6 +56,18 @@ public class Resource implements Serializable {
     private String path;
 
     /**
+     * 资源内容的大小，单位：字节
+     */
+    @TableField("size")
+    private Integer size;
+
+    /**
+     * 资源的 MIME 类型
+     */
+    @TableField("mime_type")
+    private String mimeType;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

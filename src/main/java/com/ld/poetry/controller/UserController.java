@@ -3,6 +3,7 @@ package com.ld.poetry.controller;
 
 import com.ld.poetry.config.LoginCheck;
 import com.ld.poetry.config.PoetryResult;
+import com.ld.poetry.config.SaveCheck;
 import com.ld.poetry.service.UserService;
 import com.ld.poetry.utils.CommonConst;
 import com.ld.poetry.utils.PoetryCache;
@@ -87,6 +88,7 @@ public class UserController {
      */
     @GetMapping("/getCode")
     @LoginCheck
+    @SaveCheck
     public PoetryResult getCode(@RequestParam("flag") Integer flag) {
         return userService.getCode(flag);
     }
@@ -99,6 +101,7 @@ public class UserController {
      */
     @GetMapping("/getCodeForBind")
     @LoginCheck
+    @SaveCheck
     public PoetryResult getCodeForBind(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
         return userService.getCodeForBind(place, flag);
     }
@@ -124,6 +127,7 @@ public class UserController {
      * 2 邮箱
      */
     @GetMapping("/getCodeForForgetPassword")
+    @SaveCheck
     public PoetryResult getCodeForForgetPassword(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
         return userService.getCodeForForgetPassword(place, flag);
     }
