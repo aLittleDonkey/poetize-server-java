@@ -1,5 +1,10 @@
 server:
   port: 8081
+  tomcat:
+    threads.max: 50
+    max-connections: 100
+    max-http-form-post-size: 35MB
+    connection-timeout: 60000
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml
@@ -11,6 +16,11 @@ mybatis-plus:
       logic-not-delete-value: 0
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
   mail:
     host: smtp.qq.com
     username: $$$$邮箱地址
@@ -37,8 +47,19 @@ spring:
 user:
   code:
     format: 【poetize.cn】%s为本次验证的验证码，请在5分钟内完成验证。为保证账号安全，请勿泄漏此验证码。
+  subscribe:
+    format: 【poetize.cn】您订阅的专栏【%s】新增一篇文章：%s。
+
+store:
+  type: qiniu
+
+local:
+  enable: true
+  uploadUrl: $$$$服务器上传路径，仿照【/home/file/】
+  downloadUrl: $$$$服务器访问路径，仿照【https://poetize.cn/static/】
 
 qiniu:
+  enable: true
   accessKey: $$$$七牛云accessKey
   secretKey: $$$$七牛云secretKey
   bucket: $$$$七牛云存储空间

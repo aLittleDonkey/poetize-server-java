@@ -50,6 +50,12 @@ public class Resource implements Serializable {
     private Boolean status;
 
     /**
+     * 存储平台
+     */
+    @TableField("store_type")
+    private String storeType;
+
+    /**
      * 资源路径
      */
     @TableField("path")

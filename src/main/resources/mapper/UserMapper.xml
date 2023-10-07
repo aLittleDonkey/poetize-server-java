@@ -14,6 +14,7 @@
         <result column="open_id" property="openId"/>
         <result column="avatar" property="avatar"/>
         <result column="admire" property="admire"/>
+        <result column="subscribe" property="subscribe"/>
         <result column="introduction" property="introduction"/>
         <result column="user_type" property="userType"/>
         <result column="create_time" property="createTime"/>
@@ -24,7 +25,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, username, password, phone_number, email, admire, user_status, gender, open_id, avatar, introduction, user_type, create_time, update_time, update_by, deleted
+        id, username, password, phone_number, email, admire, subscribe, user_status, gender, open_id, avatar, introduction, user_type, create_time, update_time, update_by, deleted
     </sql>
 
 </mapper>

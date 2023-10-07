@@ -83,6 +83,12 @@ public class User implements Serializable {
     private String admire;
 
     /**
+     * 订阅
+     */
+    @TableField("subscribe")
+    private String subscribe;
+
+    /**
      * 简介
      */
     @TableField("introduction")

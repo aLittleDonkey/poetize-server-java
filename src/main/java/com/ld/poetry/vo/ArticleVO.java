@@ -36,6 +36,8 @@ public class ArticleVO {
 
     private String password;
 
+    private String tips;
+
     private Boolean viewStatus;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

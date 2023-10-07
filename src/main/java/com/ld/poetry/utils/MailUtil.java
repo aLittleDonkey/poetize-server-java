@@ -42,15 +42,13 @@ public class MailUtil {
     public static final String messageMail = "你收到来自 %s 的留言";
     public static final String loveMail = "你收到来自 %s 的祝福";
     public static final String imMail = "你收到来自 %s 的消息";
+    public static final String notificationMail = "你收到来自 %s 的订阅";
 
     @Autowired
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String sendMailer;
-
-    @Value("${qiniu.downloadUrl}")
-    private String downloadUrl;
 
     /**
      * 1. 网站名称

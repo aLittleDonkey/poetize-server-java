@@ -40,7 +40,7 @@ public class SaveCheckAspect {
                     PoetryCache.put(CommonConst.SAVE_COUNT_USER_ID + user.getId().toString(), atomicInteger, CommonConst.SAVE_EXPIRE);
                 }
                 int userIdCount = atomicInteger.getAndIncrement();
-                if (userIdCount > CommonConst.SAVE_MAX_COUNT) {
+                if (userIdCount >= CommonConst.SAVE_MAX_COUNT) {
                     log.info("用户保存超限：" + user.getId().toString() + "，次数：" + userIdCount);
                     flag = true;
                 }

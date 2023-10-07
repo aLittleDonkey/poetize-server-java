@@ -49,4 +49,6 @@ public interface UserService extends IService<User> {
     PoetryResult<List<UserVO>> getUserByUsername(String username);
 
     PoetryResult<UserVO> token(String userToken);
+
+    PoetryResult<UserVO> subscribe(Integer labelId, Boolean flag);
 }

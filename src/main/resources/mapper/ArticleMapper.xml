@@ -17,6 +17,7 @@
         <result column="recommend_status" property="recommendStatus"/>
         <result column="view_status" property="viewStatus"/>
         <result column="password" property="password"/>
+        <result column="tips" property="tips"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="update_by" property="updateBy"/>
@@ -25,7 +26,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, sort_id, label_id, article_cover, article_title, article_content, password, view_status, recommend_status, view_count, like_count, comment_status, create_time, update_time, update_by, deleted
+        id, user_id, sort_id, label_id, article_cover, article_title, article_content, password, tips, view_status, recommend_status, view_count, like_count, comment_status, create_time, update_time, update_by, deleted
     </sql>
 
 </mapper>

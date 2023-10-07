@@ -230,4 +230,9 @@ public class CommonConst {
     public static final String WEIYAN_TYPE_FRIEND = "friend";
 
     public static final String WEIYAN_TYPE_NEWS = "news";
+
+    /**
+     * 友情链接
+     */
+    public static final String DEFAULT_FRIEND = "\uD83E\uDD47友情链接";
 }

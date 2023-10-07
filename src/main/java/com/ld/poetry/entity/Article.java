@@ -71,6 +71,12 @@ public class Article implements Serializable {
     private String password;
 
     /**
+     * 提示
+     */
+    @TableField("tips")
+    private String tips;
+
+    /**
      * 是否可见[0:否，1:是]
      */
     @TableField("view_status")

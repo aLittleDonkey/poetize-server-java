@@ -151,5 +151,18 @@ public class UserController {
     public PoetryResult<List<UserVO>> getUserByUsername(@RequestParam("username") String username) {
         return userService.getUserByUsername(username);
     }
+
+    /**
+     * 订阅/取消订阅专栏（标签）
+     * <p>
+     * flag = true：订阅
+     * flag = false：取消订阅
+     */
+    @GetMapping("/subscribe")
+    @LoginCheck
+    public PoetryResult<UserVO> subscribe(@RequestParam("labelId") Integer labelId, @RequestParam("flag") Boolean flag) {
+        PoetryCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
+        return userService.subscribe(labelId, flag);
+    }
 }
 

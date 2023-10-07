@@ -76,12 +76,10 @@ public class ArticleController {
 
     /**
      * 查询文章
-     * <p>
-     * flag = true：查询可见的文章
      */
     @GetMapping("/getArticleById")
-    public PoetryResult<ArticleVO> getArticleById(@RequestParam("id") Integer id, @RequestParam("flag") Boolean flag, @RequestParam(value = "password", required = false) String password) {
-        return articleService.getArticleById(id, flag, password);
+    public PoetryResult<ArticleVO> getArticleById(@RequestParam("id") Integer id, @RequestParam(value = "password", required = false) String password) {
+        return articleService.getArticleById(id, password);
     }
 }
 

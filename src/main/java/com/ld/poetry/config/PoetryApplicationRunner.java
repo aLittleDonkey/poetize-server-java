@@ -12,6 +12,7 @@ import com.ld.poetry.utils.CommonQuery;
 import com.ld.poetry.utils.PoetryCache;
 import com.ld.poetry.utils.PoetryEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class PoetryApplicationRunner implements ApplicationRunner {
+
+    @Value("${store.type}")
+    private String defaultType;
 
     @Autowired
     private WebInfoMapper webInfoMapper;
@@ -51,6 +55,7 @@ public class PoetryApplicationRunner implements ApplicationRunner {
         LambdaQueryChainWrapper<WebInfo> wrapper = new LambdaQueryChainWrapper<>(webInfoMapper);
         List<WebInfo> list = wrapper.list();
         if (!CollectionUtils.isEmpty(list)) {
+            list.get(0).setDefaultStoreType(defaultType);
             PoetryCache.put(CommonConst.WEB_INFO, list.get(0));
         }
 

@@ -21,6 +21,7 @@ CREATE TABLE `user` (
   `open_id` varchar(128) DEFAULT NULL COMMENT 'openId',
   `avatar` varchar(256) DEFAULT NULL COMMENT '头像',
   `admire` varchar(32) DEFAULT NULL COMMENT '赞赏',
+  `subscribe` text DEFAULT NULL COMMENT '订阅',
   `introduction` varchar(4096) DEFAULT NULL COMMENT '简介',
   `user_type` tinyint(2) NOT NULL DEFAULT 2 COMMENT '用户类型[0:admin，1:管理员，2:普通用户]',
 
@@ -47,6 +48,7 @@ CREATE TABLE `article` (
   `like_count` int NOT NULL DEFAULT 0 COMMENT '点赞数',
   `view_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否可见[0:否，1:是]',
   `password` varchar(128) DEFAULT NULL COMMENT '密码',
+  `tips` varchar(128) DEFAULT NULL COMMENT '提示',
   `recommend_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否推荐[0:否，1:是]',
   `comment_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用评论[0:否，1:是]',
 
@@ -177,6 +179,7 @@ CREATE TABLE `resource` (
   `size` int DEFAULT NULL COMMENT '资源内容的大小，单位：字节',
   `mime_type` varchar(256) DEFAULT NULL COMMENT '资源的 MIME 类型',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用[0:否，1:是]',
+  `store_type` varchar(16) DEFAULT NULL COMMENT '存储平台',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 
   PRIMARY KEY (`id`),
@@ -301,7 +304,7 @@ CREATE TABLE `im_chat_user_group_message` (
 
 -- 第三步：执行初始化语句
 
-INSERT INTO `user` (`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`, `admire`) VALUES(1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', 0, 'Sara', 0, '');
+INSERT INTO `user` (`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`, `admire`, `subscribe`) VALUES(1, 'Sara', '47bce5c74f589f4867dbd57e9ca9f808', '', '', 1, 1, '', '', '', 0, 'Sara', 0, '', '');
 
 INSERT INTO `web_info` (`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`, `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`) VALUES(1, 'Sara', 'Poetize', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{
   "mouseover": [

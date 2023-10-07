@@ -1,21 +1,22 @@
 package com.ld.poetry.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ld.poetry.config.PoetryResult;
 import com.ld.poetry.dao.ArticleMapper;
-import com.ld.poetry.entity.Article;
-import com.ld.poetry.entity.Label;
-import com.ld.poetry.entity.Sort;
-import com.ld.poetry.entity.User;
+import com.ld.poetry.dao.LabelMapper;
+import com.ld.poetry.entity.*;
 import com.ld.poetry.service.ArticleService;
+import com.ld.poetry.service.UserService;
 import com.ld.poetry.utils.*;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -42,6 +43,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Autowired
     private CommonQuery commonQuery;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private MailUtil mailUtil;
+
+    @Autowired
+    private LabelMapper labelMapper;
+
+    @Value("${user.subscribe.format}")
+    private String subscribeFormat;
+
     @Override
     public PoetryResult saveArticle(ArticleVO articleVO) {
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && !StringUtils.hasText(articleVO.getPassword())) {
@@ -53,6 +66,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && StringUtils.hasText(articleVO.getPassword())) {
             article.setPassword(articleVO.getPassword());
+            article.setTips(articleVO.getTips());
         }
         article.setViewStatus(articleVO.getViewStatus());
         article.setCommentStatus(articleVO.getCommentStatus());
@@ -68,7 +82,39 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (!CollectionUtils.isEmpty(sortInfo)) {
             PoetryCache.put(CommonConst.SORT_INFO, sortInfo);
         }
+
+        try {
+            if (articleVO.getViewStatus()) {
+                List<User> users = userService.lambdaQuery().select(User::getEmail, User::getSubscribe).eq(User::getUserStatus, PoetryEnum.STATUS_ENABLE.getCode()).list();
+                List<String> emails = users.stream().filter(u -> {
+                    List<Integer> sub = JSON.parseArray(u.getSubscribe(), Integer.class);
+                    return !CollectionUtils.isEmpty(sub) && sub.contains(articleVO.getLabelId());
+                }).map(User::getEmail).collect(Collectors.toList());
+
+                if (!CollectionUtils.isEmpty(emails)) {
+                    LambdaQueryChainWrapper<Label> wrapper = new LambdaQueryChainWrapper<>(labelMapper);
+                    Label label = wrapper.select(Label::getLabelName).eq(Label::getId, articleVO.getLabelId()).one();
+                    String text = getSubscribeMail(label.getLabelName(), articleVO.getArticleTitle());
+                    WebInfo webInfo = (WebInfo) PoetryCache.get(CommonConst.WEB_INFO);
+                    mailUtil.sendMailMessage(emails, "您有一封来自" + (webInfo == null ? "Poetize" : webInfo.getWebName()) + "的回执！", text);
+                }
+            }
+        } catch (Exception e) {
+            log.error("订阅邮件发送失败：", e);
+        }
         return PoetryResult.success();
+    }
+
+    private String getSubscribeMail(String labelName, String articleTitle) {
+        WebInfo webInfo = (WebInfo) PoetryCache.get(CommonConst.WEB_INFO);
+        String webName = (webInfo == null ? "Poetize" : webInfo.getWebName());
+        return String.format(mailUtil.getMailText(),
+                webName,
+                String.format(MailUtil.notificationMail, PoetryUtil.getAdminUser().getUsername()),
+                PoetryUtil.getAdminUser().getUsername(),
+                String.format(subscribeFormat, labelName, articleTitle),
+                "",
+                webName);
     }
 
     @Override
@@ -113,6 +159,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && StringUtils.hasText(articleVO.getPassword())) {
             updateChainWrapper.set(Article::getPassword, articleVO.getPassword());
+            updateChainWrapper.set(StringUtils.hasText(articleVO.getTips()), Article::getTips, articleVO.getTips());
         }
         if (articleVO.getViewStatus() != null) {
             updateChainWrapper.set(Article::getViewStatus, articleVO.getViewStatus());
@@ -139,7 +186,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
 
         LambdaQueryChainWrapper<Article> lambdaQuery = lambdaQuery();
-        lambdaQuery.eq(Article::getViewStatus, PoetryEnum.STATUS_ENABLE.getCode());
         lambdaQuery.in(!CollectionUtils.isEmpty(ids), Article::getId, ids);
         lambdaQuery.like(StringUtils.hasText(baseRequestVO.getSearchKey()), Article::getArticleTitle, baseRequestVO.getSearchKey());
         lambdaQuery.eq(baseRequestVO.getRecommendStatus() != null && baseRequestVO.getRecommendStatus(), Article::getRecommendStatus, PoetryEnum.STATUS_ENABLE.getCode());
@@ -186,20 +232,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public PoetryResult<ArticleVO> getArticleById(Integer id, Boolean flag, String password) {
+    public PoetryResult<ArticleVO> getArticleById(Integer id, String password) {
         LambdaQueryChainWrapper<Article> lambdaQuery = lambdaQuery();
         lambdaQuery.eq(Article::getId, id);
-        if (flag) {
-            lambdaQuery.eq(Article::getViewStatus, PoetryEnum.STATUS_ENABLE.getCode());
-        } else {
-            if (!StringUtils.hasText(password)) {
-                return PoetryResult.fail("请输入文章密码！");
-            }
-            lambdaQuery.eq(Article::getPassword, password);
-        }
+
         Article article = lambdaQuery.one();
         if (article == null) {
             return PoetryResult.success();
+        }
+        if (!article.getViewStatus() && (!StringUtils.hasText(password) || !password.equals(article.getPassword()))) {
+            return PoetryResult.fail("密码错误" + (StringUtils.hasText(article.getTips()) ? article.getTips() : "请联系作者获取密码"));
         }
         article.setPassword(null);
         articleMapper.updateViewCount(id);

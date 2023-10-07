@@ -1,6 +1,7 @@
 package com.ld.poetry.service.impl;
 
 import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -74,11 +75,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         password = new String(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).decrypt(password));
 
         User one = lambdaQuery().and(wrapper -> wrapper
-                        .eq(User::getUsername, account)
-                        .or()
-                        .eq(User::getEmail, account)
-                        .or()
-                        .eq(User::getPhoneNumber, account))
+                .eq(User::getUsername, account)
+                .or()
+                .eq(User::getEmail, account)
+                .or()
+                .eq(User::getPhoneNumber, account))
                 .eq(User::getPassword, DigestUtils.md5DigestAsHex(password.getBytes()))
                 .one();
 
@@ -278,6 +279,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(one, userVO);
         userVO.setPassword(null);
+        userVO.setAccessToken(PoetryUtil.getToken());
         return PoetryResult.success(userVO);
     }
 
@@ -542,6 +544,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         userVO.setAccessToken(userToken);
 
+        return PoetryResult.success(userVO);
+    }
+
+    @Override
+    public PoetryResult<UserVO> subscribe(Integer labelId, Boolean flag) {
+        UserVO userVO = null;
+        User one = lambdaQuery().eq(User::getId, PoetryUtil.getUserId()).one();
+        List<Integer> sub = JSON.parseArray(one.getSubscribe(), Integer.class);
+        if (sub == null) sub = new ArrayList<>();
+        if (flag) {
+            if (!sub.contains(labelId)) {
+                sub.add(labelId);
+                User user = new User();
+                user.setId(one.getId());
+                user.setSubscribe(JSON.toJSONString(sub));
+                updateById(user);
+
+                userVO = new UserVO();
+                BeanUtils.copyProperties(one, userVO);
+                userVO.setPassword(null);
+                userVO.setSubscribe(user.getSubscribe());
+                userVO.setAccessToken(PoetryUtil.getToken());
+            }
+        } else {
+            if (sub.contains(labelId)) {
+                sub.remove(labelId);
+                User user = new User();
+                user.setId(one.getId());
+                user.setSubscribe(JSON.toJSONString(sub));
+                updateById(user);
+
+                userVO = new UserVO();
+                BeanUtils.copyProperties(one, userVO);
+                userVO.setPassword(null);
+                userVO.setSubscribe(user.getSubscribe());
+                userVO.setAccessToken(PoetryUtil.getToken());
+            }
+        }
         return PoetryResult.success(userVO);
     }
 
