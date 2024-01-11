@@ -149,6 +149,11 @@ public class CommonConst {
     public static final String ARTICLE_LIST = "article_list";
 
     /**
+     * 文章缓存，用于首页
+     */
+    public static final String SORT_ARTICLE_LIST = "sort_article_list";
+
+    /**
      * 默认缓存过期时间
      */
     public static final long EXPIRE = 1800;
@@ -213,6 +218,8 @@ public class CommonConst {
     public static final String PATH_TYPE_LOVE_MAN = "love/manCover";
 
     public static final String PATH_TYPE_LOVE_WOMAN = "love/womanCover";
+
+    public static final String PATH_TYPE_VIDEO_ARTICLE = "video/article";
 
     public static final String PATH_TYPE_ASSETS = "assets";
 

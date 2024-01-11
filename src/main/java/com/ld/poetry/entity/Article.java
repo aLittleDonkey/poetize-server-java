@@ -65,6 +65,12 @@ public class Article implements Serializable {
     private String articleContent;
 
     /**
+     * 视频链接
+     */
+    @TableField("video_url")
+    private String videoUrl;
+
+    /**
      * 密码
      */
     @TableField("password")

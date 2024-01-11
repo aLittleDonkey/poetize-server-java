@@ -16,13 +16,7 @@ public class StringUtil {
     private static final String REGEX_STYLE = "<style[^>]*?>[\\s\\S]*?<\\/style>";
 
     public static String removeHtml(String content) {
-        return content.replace("</", "《/")
-                .replace("/>", "/》")
-                .replace("<script", "《style")
-                .replace("<style", "《style")
-                .replace("<img", "《img")
-                .replace("<br", "《br")
-                .replace("<input", "《input");
+        return content.replace("<", "《").replace(">", "》");
     }
 
     public static boolean matchString(String text, String searchText) {

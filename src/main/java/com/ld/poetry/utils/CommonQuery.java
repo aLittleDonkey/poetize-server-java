@@ -189,7 +189,7 @@ public class CommonQuery {
         if (!CollectionUtils.isEmpty(sorts)) {
             sorts.forEach(sort -> {
                 LambdaQueryChainWrapper<Article> sortWrapper = new LambdaQueryChainWrapper<>(articleMapper);
-                Integer countOfSort = sortWrapper.eq(Article::getSortId, sort.getId()).eq(Article::getViewStatus, PoetryEnum.STATUS_ENABLE.getCode()).count();
+                Integer countOfSort = sortWrapper.eq(Article::getSortId, sort.getId()).count();
                 sort.setCountOfSort(countOfSort);
 
                 LambdaQueryChainWrapper<Label> wrapper = new LambdaQueryChainWrapper<>(labelMapper);
@@ -197,7 +197,7 @@ public class CommonQuery {
                 if (!CollectionUtils.isEmpty(labels)) {
                     labels.forEach(label -> {
                         LambdaQueryChainWrapper<Article> labelWrapper = new LambdaQueryChainWrapper<>(articleMapper);
-                        Integer countOfLabel = labelWrapper.eq(Article::getLabelId, label.getId()).eq(Article::getViewStatus, PoetryEnum.STATUS_ENABLE.getCode()).count();
+                        Integer countOfLabel = labelWrapper.eq(Article::getLabelId, label.getId()).count();
                         label.setCountOfLabel(countOfLabel);
                     });
                     sort.setLabels(labels);

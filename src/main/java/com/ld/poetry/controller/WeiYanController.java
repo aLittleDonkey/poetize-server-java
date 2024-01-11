@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 /**
  * <p>
  * 微言表 前端控制器
@@ -69,8 +71,12 @@ public class WeiYanController {
     @PostMapping("/saveNews")
     @LoginCheck
     public PoetryResult saveNews(@RequestBody WeiYan weiYanVO) {
-        if (!StringUtils.hasText(weiYanVO.getContent()) || weiYanVO.getSource() == null || weiYanVO.getCreateTime() == null) {
+        if (!StringUtils.hasText(weiYanVO.getContent()) || weiYanVO.getSource() == null) {
             return PoetryResult.fail("信息不全！");
+        }
+
+        if (weiYanVO.getCreateTime() == null) {
+            weiYanVO.setCreateTime(LocalDateTime.now());
         }
 
         Integer userId = PoetryUtil.getUserId();

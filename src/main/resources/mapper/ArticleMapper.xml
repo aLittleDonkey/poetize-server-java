@@ -11,6 +11,7 @@
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
         <result column="article_content" property="articleContent"/>
+        <result column="video_url" property="videoUrl"/>
         <result column="view_count" property="viewCount"/>
         <result column="like_count" property="likeCount"/>
         <result column="comment_status" property="commentStatus"/>
@@ -26,7 +27,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, sort_id, label_id, article_cover, article_title, article_content, password, tips, view_status, recommend_status, view_count, like_count, comment_status, create_time, update_time, update_by, deleted
+        id, user_id, sort_id, label_id, article_cover, article_title, video_url, article_content, password, tips, view_status, recommend_status, view_count, like_count, comment_status, create_time, update_time, update_by, deleted
     </sql>
 
 </mapper>

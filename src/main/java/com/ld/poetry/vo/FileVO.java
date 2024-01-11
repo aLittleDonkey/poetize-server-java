@@ -17,4 +17,6 @@ public class FileVO {
     private String visitPath;
 
     private MultipartFile file;
+
+    private String originalName;
 }

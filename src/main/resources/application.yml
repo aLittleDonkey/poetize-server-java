@@ -3,7 +3,7 @@ server:
   tomcat:
     threads.max: 50
     max-connections: 100
-    max-http-form-post-size: 35MB
+    max-http-form-post-size: 120MB
     connection-timeout: 60000
 
 mybatis-plus:
@@ -18,8 +18,8 @@ mybatis-plus:
 spring:
   servlet:
     multipart:
-      max-file-size: 30MB
-      max-request-size: 30MB
+      max-file-size: 100MB
+      max-request-size: 100MB
 
   mail:
     host: smtp.qq.com

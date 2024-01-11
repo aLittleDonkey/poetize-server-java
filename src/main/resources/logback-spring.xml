@@ -107,6 +107,8 @@
         <appender-ref ref="fileErrorLog"/>
     </appender>
 
+    <logger name="org.tio.core.task.CloseRunnable" level="WARN"></logger>
+    <logger name="org.tio.core.ChannelContext" level="WARN"></logger>
 
     <root level="info">
         <appender-ref ref="ASYNC_consoleLog"/>

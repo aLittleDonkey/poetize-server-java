@@ -34,6 +34,8 @@ public class ArticleVO {
 
     private Boolean recommendStatus;
 
+    private String videoUrl;
+
     private String password;
 
     private String tips;

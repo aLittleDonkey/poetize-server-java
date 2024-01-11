@@ -51,6 +51,7 @@ public class ResourceController {
         re.setPath(resource.getPath());
         re.setType(resource.getType());
         re.setSize(resource.getSize());
+        re.setOriginalName(resource.getOriginalName());
         re.setMimeType(resource.getMimeType());
         re.setStoreType(resource.getStoreType());
         re.setUserId(PoetryUtil.getUserId());
@@ -78,6 +79,7 @@ public class ResourceController {
         re.setSize(Integer.valueOf(Long.toString(file.getSize())));
         re.setMimeType(file.getContentType());
         re.setStoreType(fileVO.getStoreType());
+        re.setOriginalName(fileVO.getOriginalName());
         re.setUserId(PoetryUtil.getUserId());
         resourceService.save(re);
         return PoetryResult.success(result.getVisitPath());

@@ -44,6 +44,7 @@ CREATE TABLE `article` (
   `article_cover` varchar(256) DEFAULT NULL COMMENT '封面',
   `article_title` varchar(32) NOT NULL COMMENT '博文标题',
   `article_content` text NOT NULL COMMENT '博文内容',
+  `video_url` varchar(1024) DEFAULT NULL COMMENT '视频链接',
   `view_count` int NOT NULL DEFAULT 0 COMMENT '浏览量',
   `like_count` int NOT NULL DEFAULT 0 COMMENT '点赞数',
   `view_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否可见[0:否，1:是]',
@@ -53,7 +54,7 @@ CREATE TABLE `article` (
   `comment_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用评论[0:否，1:是]',
 
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime  DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最终修改时间',
+  `update_time` datetime  DEFAULT CURRENT_TIMESTAMP COMMENT '最终修改时间',
   `update_by` varchar(32) DEFAULT NULL COMMENT '最终修改人',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否启用[0:未删除，1:已删除]',
 
@@ -177,6 +178,7 @@ CREATE TABLE `resource` (
   `type` varchar(32) NOT NULL COMMENT '资源类型',
   `path` varchar(256) NOT NULL COMMENT '资源路径',
   `size` int DEFAULT NULL COMMENT '资源内容的大小，单位：字节',
+  `original_name` varchar(512) DEFAULT NULL COMMENT '文件名称',
   `mime_type` varchar(256) DEFAULT NULL COMMENT '资源的 MIME 类型',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否启用[0:否，1:是]',
   `store_type` varchar(16) DEFAULT NULL COMMENT '存储平台',

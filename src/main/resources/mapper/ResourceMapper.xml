@@ -9,6 +9,7 @@
         <result column="type" property="type"/>
         <result column="size" property="size"/>
         <result column="mime_type" property="mimeType"/>
+        <result column="original_name" property="originalName"/>
         <result column="path" property="path"/>
         <result column="store_type" property="storeType"/>
         <result column="status" property="status"/>
@@ -17,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, type, size, mime_type, path, store_type, status, create_time
+        id, user_id, type, size, mime_type, original_name, path, store_type, status, create_time
     </sql>
 
 </mapper>

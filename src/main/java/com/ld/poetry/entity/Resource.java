@@ -74,6 +74,12 @@ public class Resource implements Serializable {
     private String mimeType;
 
     /**
+     * 文件名称
+     */
+    @TableField("original_name")
+    private String originalName;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")

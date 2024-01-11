@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 文章表 服务类
@@ -30,4 +33,6 @@ public interface ArticleService extends IService<Article> {
     PoetryResult<Page> listAdminArticle(BaseRequestVO baseRequestVO, Boolean isBoss);
 
     PoetryResult<ArticleVO> getArticleByIdForUser(Integer id);
+
+    PoetryResult<Map<Integer, List<ArticleVO>>> listSortArticle();
 }

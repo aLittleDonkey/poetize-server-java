@@ -1,5 +1,6 @@
 package com.ld.poetry.service.impl;
 
+import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ld.poetry.config.PoetryResult;
 import com.ld.poetry.dao.ArticleMapper;
 import com.ld.poetry.dao.LabelMapper;
+import com.ld.poetry.dao.SortMapper;
 import com.ld.poetry.entity.*;
 import com.ld.poetry.service.ArticleService;
 import com.ld.poetry.service.UserService;
@@ -21,9 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private MailUtil mailUtil;
 
     @Autowired
+    private SortMapper sortMapper;
+
+    @Autowired
     private LabelMapper labelMapper;
 
     @Value("${user.subscribe.format}")
@@ -63,6 +68,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Article article = new Article();
         if (StringUtils.hasText(articleVO.getArticleCover())) {
             article.setArticleCover(articleVO.getArticleCover());
+        }
+        if (StringUtils.hasText(articleVO.getVideoUrl())) {
+            article.setVideoUrl(articleVO.getVideoUrl());
         }
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && StringUtils.hasText(articleVO.getPassword())) {
             article.setPassword(articleVO.getPassword());
@@ -144,10 +152,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .set(Article::getSortId, articleVO.getSortId())
                 .set(Article::getArticleTitle, articleVO.getArticleTitle())
                 .set(Article::getUpdateBy, PoetryUtil.getUsername())
+                .set(Article::getUpdateTime, LocalDateTime.now())
                 .set(Article::getArticleContent, articleVO.getArticleContent());
 
         if (StringUtils.hasText(articleVO.getArticleCover())) {
             updateChainWrapper.set(Article::getArticleCover, articleVO.getArticleCover());
+        }
+        if (StringUtils.hasText(articleVO.getVideoUrl())) {
+            updateChainWrapper.set(Article::getVideoUrl, articleVO.getVideoUrl());
         }
         if (articleVO.getCommentStatus() != null) {
             updateChainWrapper.set(Article::getCommentStatus, articleVO.getCommentStatus());
@@ -209,6 +221,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
             for (Article article : records) {
                 article.setPassword(null);
+                article.setVideoUrl(null);
                 if (article.getArticleContent().length() > CommonConst.SUMMARY) {
                     article.setArticleContent(article.getArticleContent().substring(0, CommonConst.SUMMARY).replace("`", "").replace("#", "").replace(">", ""));
                 }
@@ -243,8 +256,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (!article.getViewStatus() && (!StringUtils.hasText(password) || !password.equals(article.getPassword()))) {
             return PoetryResult.fail("密码错误" + (StringUtils.hasText(article.getTips()) ? article.getTips() : "请联系作者获取密码"));
         }
-        article.setPassword(null);
         articleMapper.updateViewCount(id);
+        article.setPassword(null);
+        if (StringUtils.hasText(article.getVideoUrl())) {
+            article.setVideoUrl(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).encryptBase64(article.getVideoUrl()));
+        }
         ArticleVO articleVO = buildArticleVO(article, false);
         return PoetryResult.success(articleVO);
     }
@@ -300,6 +316,41 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         ArticleVO articleVO = new ArticleVO();
         BeanUtils.copyProperties(article, articleVO);
         return PoetryResult.success(articleVO);
+    }
+
+    @Override
+    public PoetryResult<Map<Integer, List<ArticleVO>>> listSortArticle() {
+        Map<Integer, List<ArticleVO>> result = (Map<Integer, List<ArticleVO>>) PoetryCache.get(CommonConst.SORT_ARTICLE_LIST);
+        if (result != null) {
+            return PoetryResult.success(result);
+        }
+
+        Map<Integer, List<ArticleVO>> map = new HashMap<>();
+
+        List<Sort> sorts = new LambdaQueryChainWrapper<>(sortMapper).select(Sort::getId).list();
+        for (Sort sort : sorts) {
+            LambdaQueryChainWrapper<Article> lambdaQuery = lambdaQuery()
+                    .eq(Article::getSortId, sort.getId())
+                    .orderByDesc(Article::getCreateTime)
+                    .last("limit 6");
+            List<Article> articleList = lambdaQuery.list();
+            if (CollectionUtils.isEmpty(articleList)) {
+                continue;
+            }
+
+            List<ArticleVO> articleVOList = articleList.stream().map(article -> {
+                article.setPassword(null);
+                article.setVideoUrl(null);
+                if (article.getArticleContent().length() > CommonConst.SUMMARY) {
+                    article.setArticleContent(article.getArticleContent().substring(0, CommonConst.SUMMARY).replace("`", "").replace("#", "").replace(">", ""));
+                }
+                return buildArticleVO(article, false);
+            }).collect(Collectors.toList());
+            map.put(sort.getId(), articleVOList);
+        }
+
+        PoetryCache.put(CommonConst.SORT_ARTICLE_LIST, map, CommonConst.TOKEN_INTERVAL);
+        return PoetryResult.success(map);
     }
 
     private ArticleVO buildArticleVO(Article article, Boolean isAdmin) {
