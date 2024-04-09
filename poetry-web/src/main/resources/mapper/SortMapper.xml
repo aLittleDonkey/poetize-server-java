@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.SortMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.Sort">
+        <id column="id" property="id"/>
+        <result column="sort_name" property="sortName"/>
+        <result column="sort_description" property="sortDescription"/>
+        <result column="sort_type" property="sortType"/>
+        <result column="priority" property="priority"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sort_name, sort_description, sort_type, priority
+    </sql>
+
+</mapper>

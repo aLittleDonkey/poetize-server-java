@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.WeiYanMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.WeiYan">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="content" property="content"/>
+        <result column="is_public" property="isPublic"/>
+        <result column="type" property="type"/>
+        <result column="source" property="source"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, like_count, content, is_public, source, type, create_time
+    </sql>
+
+</mapper>

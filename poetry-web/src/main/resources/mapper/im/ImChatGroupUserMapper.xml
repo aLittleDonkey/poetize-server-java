@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.im.http.dao.ImChatGroupUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.im.http.entity.ImChatGroupUser">
+        <id column="id" property="id"/>
+        <result column="group_id" property="groupId"/>
+        <result column="user_id" property="userId"/>
+        <result column="verify_user_id" property="verifyUserId"/>
+        <result column="admin_flag" property="adminFlag"/>
+        <result column="remark" property="remark"/>
+        <result column="user_status" property="userStatus"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, group_id, user_id, verify_user_id, admin_flag, remark, user_status, create_time
+    </sql>
+
+</mapper>

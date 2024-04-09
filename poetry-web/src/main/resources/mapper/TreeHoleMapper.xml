@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ld.poetry.dao.TreeHoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ld.poetry.entity.TreeHole">
+        <id column="id" property="id"/>
+        <result column="avatar" property="avatar"/>
+        <result column="message" property="message"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, avatar, message, create_time
+    </sql>
+
+    <select id="queryAllByLimit" resultType="com.ld.poetry.entity.TreeHole">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_hole
+        limit #{offset}, #{limit}
+    </select>
+
+</mapper>
