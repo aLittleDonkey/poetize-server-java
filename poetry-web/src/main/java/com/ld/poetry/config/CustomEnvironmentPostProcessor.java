@@ -23,9 +23,11 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private static final String SOURCE_NAME = "sys_config";
 
-    private static final String SOURCE_SQL = "select * from sys_config";
+    private static final String SOURCE_SQL = "select * from poetize.sys_config";
 
     private static final String DATABASE = "poetize";
+
+    private static final String sqlPath = "file:/home/poetry.sql";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -34,7 +36,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
             String username = environment.getProperty("spring.datasource.username");
             String password = environment.getProperty("spring.datasource.password");
-            String url = environment.getProperty("spring.datasource.url");
+            String url = environment.getProperty("spring.datasource.url").replace("/poetize", "");
             String driver = environment.getProperty("spring.datasource.driver-class-name");
             Class.forName(driver);
             try (Connection connection = DriverManager.getConnection(url, username, password)) {
@@ -65,7 +67,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
                 if (!resultSet.next()) {
                     ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
                     ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-                    populator.addScripts(resolver.getResources("file:/home/poetry.sql"));
+                    populator.addScripts(resolver.getResources(sqlPath));
                     populator.populate(connection);
                 }
             }
